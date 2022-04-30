@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/p5@1.4.1/lib/p5.js"></script>
+    <title>Document</title>
+</head>
+<body>
+
+    
+    
+    <h1>Data Selfie App</h1>
+    <a href="index.html">Enter</a> |
+    <a href="all.html">List</a>
+    <p>
+        Latitude <span id="lat"></span>&deg; <br>
+        Longitude <span id="lon"</span>&deg;
+    </p>
+    <input id="mood">
+    <button id="btn">Post</button>
+
+
+    <script>
+        
+        function setup() {
+        noCanvas();
+        const video = createCapture(VIDEO)
+        video.size(320, 240)
+
+        document.getElementById('btn').addEventListener('click', () =>{
+
+            if('geolocation' in navigator){
+            console.log("Geolocation Accessed")
+            navigator.geolocation.getCurrentPosition( async position => {
+                let lat = position.coords.latitude;
+                let lon = position.coords.longitude;
+
+                document.getElementById("lat").textContent = lat
+                document.getElementById("lon").textContent = lon
+                const mood = document.getElementById('mood').value;
+
+                video.loadPixels()
+                const image64 = video.canvas.toDataURL();
+                const data = { lat, lon, mood, image64 }
+                const option = {
+                    method: 'POST',
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(data),
+                }
+                const res = await fetch('/api', option )
+                const json = await res.json()
+                console.log(json)
+            })
+        }   else {
+            console.log("Geolocation Denied")
+        }
+        } )
+        
+        
+
+    }
+
+    </script>
+</body>
+</html>

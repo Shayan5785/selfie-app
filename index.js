@@ -3,9 +3,9 @@ const dataStore = require('nedb')
 const app = express();
 const db = new dataStore('database.db')
 db.loadDatabase()
+const port = process.env.PORT || 8000
 
-
-app.listen(8000, console.log("Server__Running"))
+app.listen(port, console.log("Server__Running"))
 
 app.use(express.static("public"))
 app.use(express.json({ limit: "1mb" }))
